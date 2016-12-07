@@ -63,6 +63,7 @@ WORKER_ADDR_DEFAULT = 'tcp://127.0.0.1:47290'
 WORKER_ADDR_FAILOVER = 'tcp://127.0.0.1:47290'
 # Used to monitor and manage the devices
 ADMINISTRATIVE_ADDR = 'tcp://127.0.0.1:47293'
+SCHEDULER_ADMINISTRATIVE_ADDR = 'tcp://127.0.0.1:47294'
 
 # How many jobs should the job manager concurrently handle?
 CONCURRENT_JOBS = 4
