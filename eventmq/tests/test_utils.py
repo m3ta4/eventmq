@@ -23,6 +23,7 @@ from .. import exceptions
 from ..utils import messages
 from ..utils import classes
 from ..utils import settings
+from ..utils.devices import generate_device_name
 
 
 class SettingsTestCase(unittest.TestCase):
@@ -179,6 +180,10 @@ class TestCase(unittest.TestCase):
         msgid = messages.generate_msgid()
 
         self.assertEqual(type(msgid), str)
+
+    def test_generate_device_name(self):
+        prefix = 'banana and onion juice'
+        self.assertIn(prefix, generate_device_name(prefix=prefix))
 
     def test_parse_message(self):
         emq_headers = ('myid', '', 'protoversion', 'command', 'msgid')

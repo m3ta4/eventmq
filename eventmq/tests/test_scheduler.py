@@ -129,16 +129,16 @@ class TestCase(unittest.TestCase):
             '* * * * *'
         ]
         sched.on_schedule('1234', msg_0)
-        self.assertEquals(1, len(sched.interval_jobs))
+        self.assertEquals(1, len(sched.cron_jobs))
         self.assertIsNotNone(sched.redis_server)
 
-        sched.interval_jobs = {}
+        sched.cron_jobs = {}
         sched.load_jobs()
-        self.assertEquals(1, len(sched.interval_jobs))
+        self.assertEquals(1, len(sched.cron_jobs))
 
         # Add a duplicate scheduled job
         sched.on_schedule('1234', msg_0)
-        self.assertEquals(1, len(sched.interval_jobs))
+        self.assertEquals(1, len(sched.cron_jobs))
 
         msg_1 = [
             'default',
@@ -151,15 +151,13 @@ class TestCase(unittest.TestCase):
         ]
         sched.on_schedule('1234', msg_1)
 
-        self.assertEquals(2, len(sched.interval_jobs))
+        self.assertEquals(2, len(sched.cron_jobs))
 
-        sched.interval_jobs = {}
+        sched.cron_jobs = {}
         sched.load_jobs()
 
-        self.assertEquals(2, len(sched.interval_jobs))
+        self.assertEquals(2, len(sched.cron_jobs))
         sched.on_unschedule('12345', msg_1)
-        self.assertEquals(1, len(sched.interval_jobs))
+        self.assertEquals(1, len(sched.cron_jobs))
         sched.on_unschedule('12345', msg_0)
-        self.assertEquals(0, len(sched.interval_jobs))
-
-        sched.on_disconnect()
+        self.assertEquals(0, len(sched.cron_jobs))

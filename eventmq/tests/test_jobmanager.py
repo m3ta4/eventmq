@@ -164,20 +164,3 @@ class TestCase(unittest.TestCase):
 
         start_mock.assert_called_with(addr=conf.WORKER_ADDR,
                                       queues=jm.queues)
-
-    def cleanup(self):
-        self.jm.on_disconnect(None, None)
-        self.jm = None
-
-
-def call_done(jm):
-    jm.active_jobs += 1
-    return True
-
-
-def start_jm(jm, addr):
-    jm.start(addr)
-
-
-def pretend_job():
-    time.sleep(1)
