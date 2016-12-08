@@ -116,6 +116,50 @@ class TestCase(unittest.TestCase):
         sched.on_unschedule('12345', msg_0)
         self.assertEquals(0, len(sched.interval_jobs))
 
-    def cleanup(self):
-        self.sched.on_disconnect(None, None)
-        self.sched = None
+    @mock.patch('redis.StrictRedis', mockredis.mock_strict_redis_client)
+    def test_schedule_unschedule_cron_with_redis(self):
+        sched = scheduler.Scheduler()
+        msg_0 = [
+            'default',
+            '',
+            -1,
+            json.dumps(['run', {'path': 'test',
+                                'class_args': [0],
+                                'callable': 'do_the_thing'}]),
+            '* * * * *'
+        ]
+        sched.on_schedule('1234', msg_0)
+        self.assertEquals(1, len(sched.interval_jobs))
+        self.assertIsNotNone(sched.redis_server)
+
+        sched.interval_jobs = {}
+        sched.load_jobs()
+        self.assertEquals(1, len(sched.interval_jobs))
+
+        # Add a duplicate scheduled job
+        sched.on_schedule('1234', msg_0)
+        self.assertEquals(1, len(sched.interval_jobs))
+
+        msg_1 = [
+            'default',
+            '',
+            -1,
+            json.dumps(['run', {'path': 'test',
+                                'class_args': [1],
+                                'callable': 'do_the_thing'}]),
+            '* * * * *'
+        ]
+        sched.on_schedule('1234', msg_1)
+
+        self.assertEquals(2, len(sched.interval_jobs))
+
+        sched.interval_jobs = {}
+        sched.load_jobs()
+
+        self.assertEquals(2, len(sched.interval_jobs))
+        sched.on_unschedule('12345', msg_1)
+        self.assertEquals(1, len(sched.interval_jobs))
+        sched.on_unschedule('12345', msg_0)
+        self.assertEquals(0, len(sched.interval_jobs))
+
+        sched.on_disconnect()
